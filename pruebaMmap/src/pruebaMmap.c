@@ -18,18 +18,6 @@
 #include <errno.h>
 #include <string.h>
 
-int espacioVacioBloque = 0;
-char*   string_substring(char* text, int start, int length) {
-	char* new_string = calloc(1, length + 1);
-	strncpy(new_string, text + start, length);
-	return new_string;
-
-}
-
-char *string_substring_from(char *text, int start) {
-	return string_substring(text, start, strlen(text) - start);
-}
-
 int main(void) {
 
 	struct stat file;
@@ -60,10 +48,6 @@ int main(void) {
 	printf("esto estaba antes del barraene %s\n",string_substring_until(data, i));
 	printf("esto estaba despues del barraene %s\n",string_substring_from(data, i));
 
-	//Mostrar por pantalla las palabras
-	/*for(i=0;i<file.st_size;i++){
-		printf("%c", bloque[i]);
-	}*/
 	//Buenas practicas segun foro
 	munmap(data,file.st_size);
 	close(fd);
