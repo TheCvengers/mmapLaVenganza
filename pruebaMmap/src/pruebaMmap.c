@@ -24,9 +24,9 @@ int armarBloque(char *bloque_completo,int tamanio_aux);
 
 void armarBloqueFinal(char *bloque_final, int cantidad_escrita);
 
+void agregarArchivoAlMDFS(char *archivo_a_agregar, int indice);
 
-int main(void) {
-
+void agregarArchivoAlMDFS(char *archivo_a_agregar, int indice, t_list *nodos_sistema) {
 	struct stat file;
 	int file_descriptor, tamanio_archivo;
 	int desplazamiento = 0;
@@ -39,7 +39,7 @@ int main(void) {
 	datos_a_copiar = malloc (TAMANIO_BLOQUE);
 
 	/*obtengo el descriptor del fichero*/
-	file_descriptor = open("/home/utnso/Escritorio/201301hourly.txt", O_RDONLY);
+	file_descriptor = open(archivo_a_agregar, O_RDONLY);
 	if(file_descriptor == -1){
 		perror("Error al obtener el descriptor de fichero del archivo");
 		exit(1);
@@ -66,7 +66,9 @@ int main(void) {
 
 			memcpy(datos_a_copiar, archivo_mapeado + desplazamiento, tamanio_final); //cambio tamanio_bloque por tamanio_final
 
-			armarBloqueFinal(datos_a_copiar, tamanio_final );
+			armarBloqueFinal(datos_a_copiar, tamanio_final ); //La que tengo que enviar es datos_a_copiar
+
+			enviarBloqueCortado(datos_a_copiar, nodos_sistema);// La variable que falta es la lista de nodos
 
 			free (datos_a_copiar);
 
@@ -78,15 +80,16 @@ int main(void) {
 
 		bytes_sobrantes = armarBloque(datos_a_copiar, TAMANIO_BLOQUE);
 
+		enviarBloqueCortado(datos_a_copiar, nodos_sistema); //La variable que falta es la lista de nodos
+
 		desplazamiento = desplazamiento + (TAMANIO_BLOQUE - bytes_sobrantes);
 
 	}
 
-	munmap(archivo_mapeado,file.st_size); //Buenas practicas segun foro
+	munmap(archivo_mapeado,file.st_size);
 
 	close(file_descriptor);
 
-	return 0;
 }
 
 int armarBloque(char *bloque_completo , int tamanio_aux){
